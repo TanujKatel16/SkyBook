@@ -1,0 +1,33 @@
+{
+  "name": "skybook",
+  "version": "1.0.0",
+  "description": "Flight Booking app",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TanujKatel16/SkyBook.git"
+  },
+  "keywords": [
+    "flight",
+    "booking",
+    "fullstack"
+  ],
+  "author": "Tanuj Katel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TanujKatel16/SkyBook/issues"
+  },
+  "homepage": "https://github.com/TanujKatel16/SkyBook#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prettier": "^3.9.4"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
