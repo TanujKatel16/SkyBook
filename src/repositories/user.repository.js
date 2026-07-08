@@ -32,22 +32,21 @@ class UserRepository{
     }
     async updateRefreshToken(_id, refreshToken) {
 
-        return await User.findByIdAndUpdate(
-
+        const updatedUser = await User.findByIdAndUpdate(
             _id,
-
             {
                 $set: {
                     refreshToken
                 }
             },
-
             {
                 new: true
             }
-
         );
 
+        console.log("Updated User Refresh Token:", updatedUser.refreshToken);
+
+        return updatedUser;
     }
 
 }
