@@ -7,6 +7,14 @@ class UserRepository{
         return await User.findOne({email});
 
     }
+    async findByEmailOrUsername(loginIdentifier) {
+        return await User.findOne({
+            $or: [
+                { email: loginIdentifier },
+                { username: loginIdentifier }
+            ]
+        });
+    }
     async findById(_id){
         return await User.findById(_id);
     }
@@ -16,5 +24,31 @@ class UserRepository{
     async createUser(userData){
         return await User.create(userData);
     }
+    async findUserWithoutSensitiveFields(id){
+
+        return await User.findById(id)
+        .select("-password -refreshToken");
+
+    }
+    async updateRefreshToken(_id, refreshToken) {
+
+        return await User.findByIdAndUpdate(
+
+            _id,
+
+            {
+                $set: {
+                    refreshToken
+                }
+            },
+
+            {
+                new: true
+            }
+
+        );
+
+    }
+
 }
 export default new UserRepository();

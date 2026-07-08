@@ -1,9 +1,8 @@
 import { ApiError } from "../utils/ApiError.js";
 import userRepository from "../repositories/user.repository.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import {User} from "../models/user.model.js"
 
-class userService {
+class UserService {
 
     async register(userData, avatarFile) {
 
@@ -61,10 +60,66 @@ class userService {
             });
 
 
-        const createdUser = await User.findById(user._id)
-        .select("-password -refreshToken");
+        const createdUser =await userRepository.findUserWithoutSensitiveFields(user._id);
 
         return createdUser;
+    }
+
+
+    async generateAccessAndRefreshTokens(user) {
+
+        const accessToken = user.generateAccessToken();
+
+        const refreshToken = user.generateRefreshToken();
+
+        await userRepository.updateRefreshToken(
+            user._id,
+            refreshToken
+        );
+
+        return {
+            accessToken,
+            refreshToken
+        };
+
+    }
+    async login(userData){
+
+        const{
+            email,
+            username,
+            password,
+        }=userData;
+
+        if((!username && !email)|| !password ){
+            throw new ApiError(400,"username/email and password required");
+        }
+        const loginIdentifier=email||username;
+        const user= await userRepository.findByEmailOrUsername(loginIdentifier);
+
+        if(!user){
+            throw new ApiError(404,"User doesnot exist");
+        }
+
+        const isPasswordValid=await user.isPasswordCorrect(password);
+        if (!isPasswordValid) {
+           throw new ApiError(401, "Invalid user credentials")
+        }
+
+        const {accessToken,refreshToken}= await this.generateAccessAndRefreshTokens(user);
+       
+        const loggedInUser = await userRepository.findUserWithoutSensitiveFields(user._id);
+
+        return {
+
+            user: loggedInUser,
+
+            accessToken,
+
+            refreshToken
+
+        };
+
     }
 
 
@@ -75,4 +130,4 @@ class userService {
     
 }
 
-export default new userService();
+export default new UserService();
