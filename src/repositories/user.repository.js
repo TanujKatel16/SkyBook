@@ -24,9 +24,9 @@ class UserRepository{
     async createUser(userData){
         return await User.create(userData);
     }
-    async findUserWithoutSensitiveFields(id){
+    async findUserWithoutSensitiveFields(_id){
 
-        return await User.findById(id)
+        return await User.findById(_id)
         .select("-password -refreshToken");
 
     }
@@ -40,13 +40,33 @@ class UserRepository{
                 }
             },
             {
-                new: true
+                
+               returnDocument: "after"
+
             }
+            
         );
 
-        console.log("Updated User Refresh Token:", updatedUser.refreshToken);
-
         return updatedUser;
+    }
+
+    async removeRefreshToken(_id){
+
+        const loggedOutUser = await User.findByIdAndUpdate(
+            _id,
+            {
+                $unset:{
+                    refreshToken : 1
+                }
+
+            },
+            {
+                returnDocument: "after"
+            }
+        )
+
+        return loggedOutUser;
+
     }
 
 }

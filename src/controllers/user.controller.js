@@ -38,9 +38,6 @@ const loginUser = asyncHandler(async(req,res)=>{
         secure: false
     };
 
-    console.log(accessToken);
-    console.log(refreshToken);
-
     return res
     .status(200)
     .cookie("accessToken", accessToken, options)
@@ -56,9 +53,64 @@ const loginUser = asyncHandler(async(req,res)=>{
 
 })
 
+const logoutUser = asyncHandler(async(req,res)=>{
+
+    
+    await userService.logout(req.user._id);
+
+    const options = {
+        httpOnly: true,
+        secure: false
+    };
+
+
+    return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(
+        new ApiResponse(
+            200,
+            {},
+            "User logged out successfully"
+        )
+    )
+})
+
+const updateAccessToken=asyncHandler(async(req,res)=>{
+
+    const incomingRefreshToken =
+    req.cookies?.refreshToken || req.body.refreshToken;
+
+
+    const {
+        accessToken,
+        refreshToken
+    } = await userService.refreshAccessToken(incomingRefreshToken);
+
+    const options = {
+        httpOnly: true,
+        secure: false
+    };
+
+
+    return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(
+            200,
+            "RefreshToken updated Successfully"
+        )
+    );
+
+
+})
 
 export {
     registerUser,
-    loginUser
+    loginUser,
+    logoutUser,
+    updateAccessToken
 };
-
