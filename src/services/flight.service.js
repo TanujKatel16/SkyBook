@@ -1,0 +1,111 @@
+import flightRepository from "../repositories/flight.repository.js";
+import { ApiError } from "../utils/ApiError.js";
+
+class FlightService {
+
+    async createFlight(flightData) {
+
+        const {
+            flightNumber,
+            source,
+            destination,
+            departureTime,
+            arrivalTime,
+            totalSeats,
+            availableSeats,
+            baseFare,
+            status
+        } = flightData;
+
+        if (
+            !flightNumber ||
+            !source ||
+            !destination ||
+            !departureTime ||
+            !arrivalTime ||
+            totalSeats == null ||
+            availableSeats == null ||
+            baseFare == null
+        ) {
+            throw new ApiError(400, "All required fields must be provided");
+        }
+
+        const existingFlight =
+            await flightRepository.findByFlightNumber(flightNumber);
+
+        if (existingFlight) {
+            throw new ApiError(409, "Flight already exists");
+        }
+
+        if (availableSeats > totalSeats) {
+            throw new ApiError(
+                400,
+                "Available seats cannot exceed total seats"
+            );
+        }
+
+        const flight = await flightRepository.createFlight({
+            flightNumber: flightNumber.toUpperCase(),
+            source: source.toUpperCase(),
+            destination: destination.toUpperCase(),
+            departureTime,
+            arrivalTime,
+            totalSeats,
+            availableSeats,
+            baseFare,
+            status
+        });
+
+        return flight;
+    }
+
+    async getFlightById(id) {
+
+        const flight = await flightRepository.findById(id);
+
+        if (!flight) {
+            throw new ApiError(404, "Flight not found");
+        }
+
+        return flight;
+    }
+
+    async getAllFlights() {
+
+        return await flightRepository.findAllFlights();
+
+    }
+
+    async searchFlights(filters) {
+
+        return await flightRepository.searchFlights(filters);
+
+    }
+
+    async updateFlight(id, updateData) {
+
+        const flight =
+            await flightRepository.updateFlight(id, updateData);
+
+        if (!flight) {
+            throw new ApiError(404, "Flight not found");
+        }
+
+        return flight;
+    }
+
+    async deleteFlight(id) {
+
+        const flight =
+            await flightRepository.deleteFlight(id);
+
+        if (!flight) {
+            throw new ApiError(404, "Flight not found");
+        }
+
+        return flight;
+    }
+
+}
+
+export default new FlightService();
