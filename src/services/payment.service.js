@@ -3,6 +3,7 @@ import bookingRepository from "../repositories/booking.repository.js";
 import flightRepository from "../repositories/flight.repository.js";
 import { ApiError } from "../utils/ApiError.js";
 import mongoose from "mongoose";
+import emailService from "./email.service.js";
 
 class PaymentService {
 
@@ -108,6 +109,38 @@ class PaymentService {
             await session.commitTransaction();
 
             session.endSession();
+
+            try{
+
+                console.log("Inside sendBookingConfirmation()");
+                
+
+                await emailService.sendBookingConfirmation({
+
+                    email: booking.user.email,
+
+                    passengerName: booking.passenger.fullName,
+
+                    flightNumber: flight.flightNumber,
+
+                    source: flight.source,
+
+                    destination: flight.destination,
+
+                    departureTime: flight.departureTime,
+
+                    amount: booking.totalFare,
+
+                    transactionId: payment.transactionId
+
+                });
+
+            }catch (error){
+
+                console.error("Email sending failed:", error);
+
+            }
+            console.log("Booking Successful, email sent from here");
 
             return payment;
 
