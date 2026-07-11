@@ -24,18 +24,24 @@ class FlightRepository {
 
     }
 
-    async updateFlight(_id, updateData) {
+    async updateFlight(id,updateData,session){
 
         return await Flight.findByIdAndUpdate(
 
-            _id,
+            id,
 
             {
-                $set: updateData
+
+                $set:updateData
+
             },
 
             {
-                returnDocument: "after"
+
+                returnDocument:"after",
+
+                session
+
             }
 
         );

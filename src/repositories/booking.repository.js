@@ -17,16 +17,28 @@ class BookingRepository {
         .populate("flight");
     }
 
-    async updateBooking(_id, updateData) {
+    async updateBooking(id,updateData,session){
+
         return await Booking.findByIdAndUpdate(
-            _id,
+
+            id,
+
             {
-                $set: updateData
+
+                $set:updateData
+
             },
+
             {
-                returnDocument: "after"
+
+                returnDocument:"after",
+
+                session
+
             }
+
         );
+
     }
 
     async deleteBooking(_id) {

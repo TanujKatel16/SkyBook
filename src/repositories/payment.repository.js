@@ -2,9 +2,12 @@ import { Payment } from "../models/payment.model.js";
 
 class PaymentRepository {
 
-    async createPayment(paymentData) {
+    async createPayment(paymentData, session){
 
-        return await Payment.create(paymentData);
+        return await Payment.create(
+            [paymentData],
+            { session }
+        );
 
     }
 

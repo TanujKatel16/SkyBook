@@ -2,104 +2,126 @@ import paymentRepository from "../repositories/payment.repository.js";
 import bookingRepository from "../repositories/booking.repository.js";
 import flightRepository from "../repositories/flight.repository.js";
 import { ApiError } from "../utils/ApiError.js";
+import mongoose from "mongoose";
 
 class PaymentService {
 
+
     async makePayment(paymentData) {
 
-        const {
+        const session = await mongoose.startSession();
 
-            bookingId,
+        try {
 
-            paymentMethod
+            session.startTransaction();
 
-        } = paymentData;
+            const {
 
-        const booking =
-            await bookingRepository.findById(
-                bookingId
-            );
+                bookingId,
 
-        if (!booking) {
+                paymentMethod
 
-            throw new ApiError(
-                404,
-                "Booking not found"
-            );
+            } = paymentData;
 
-        }
+            const booking =
+                await bookingRepository.findById(
+                    bookingId
+                );
 
-        if (
-            booking.bookingStatus ===
-            "Confirmed"
-        ) {
-
-            throw new ApiError(
-                400,
-                "Booking already paid"
-            );
-
-        }
-
-        const flight =
-            await flightRepository.findById(
-                booking.flight._id
-            );
-
-        if (
-            flight.availableSeats <= 0
-        ) {
-
-            throw new ApiError(
-                400,
-                "No seats available"
-            );
-
-        }
-
-        const payment =
-            await paymentRepository.createPayment({
-
-                booking: booking._id,
-
-                amount: booking.totalFare,
-
-                paymentMethod,
-
-                paymentStatus: "Success",
-
-                transactionId:
-                    "TXN" + Date.now()
-
-            });
-
-        await flightRepository.updateFlight(
-
-            flight._id,
-
-            {
-
-                availableSeats:
-                    flight.availableSeats - 1
-
+            if (!booking) {
+                throw new ApiError(
+                    404,
+                    "Booking not found"
+                );
             }
 
-        );
-
-        await bookingRepository.updateBooking(
-
-            booking._id,
-
-            {
-
-                bookingStatus:
-                    "Confirmed"
-
+            if (booking.bookingStatus === "Confirmed") {
+                throw new ApiError(
+                    400,
+                    "Booking already paid"
+                );
             }
 
-        );
+            const flight =
+                await flightRepository.findById(
+                    booking.flight._id
+                );
 
-        return payment;
+            if (flight.availableSeats <= 0) {
+                throw new ApiError(
+                    400,
+                    "No seats available"
+                );
+            }
+
+            const payment =
+                await paymentRepository.createPayment(
+
+                    {
+
+                        booking: booking._id,
+
+                        amount: booking.totalFare,
+
+                        paymentMethod,
+
+                        paymentStatus: "Success",
+
+                        transactionId:
+                            "TXN" + Date.now()
+
+                    },
+
+                    session
+
+                );
+
+            await flightRepository.updateFlight(
+
+                flight._id,
+
+                {
+
+                    availableSeats:
+                        flight.availableSeats - 1
+
+                },
+
+                session
+
+            );
+
+            await bookingRepository.updateBooking(
+
+                booking._id,
+
+                {
+
+                    bookingStatus: "Confirmed"
+
+                },
+
+                session
+
+            );
+
+            await session.commitTransaction();
+
+            session.endSession();
+
+            return payment;
+
+        }
+
+        catch (error) {
+
+            await session.abortTransaction();
+
+            session.endSession();
+
+            throw error;
+
+        }
 
     }
 
