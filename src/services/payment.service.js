@@ -111,10 +111,7 @@ class PaymentService {
             session.endSession();
 
             try{
-
-                console.log("Inside sendBookingConfirmation()");
-                
-
+               
                 await emailService.sendBookingConfirmation({
 
                     email: booking.user.email,
@@ -140,7 +137,6 @@ class PaymentService {
                 console.error("Email sending failed:", error);
 
             }
-            console.log("Booking Successful, email sent from here");
 
             return payment;
 

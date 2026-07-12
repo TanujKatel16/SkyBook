@@ -1,5 +1,6 @@
 import flightRepository from "../repositories/flight.repository.js";
 import { ApiError } from "../utils/ApiError.js";
+import redisClient from "../config/redis.js";
 
 class FlightService {
 
@@ -55,6 +56,7 @@ class FlightService {
             baseFare,
             status
         });
+        await redisClient.flushAll();
 
         return flight;
     }
@@ -78,7 +80,31 @@ class FlightService {
 
     async searchFlights(filters) {
 
-        return await flightRepository.searchFlights(filters);
+        const cacheKey = `flights:${JSON.stringify(filters)}`;
+
+        const cachedFlights = await redisClient.get(cacheKey);
+
+        if (cachedFlights) {
+
+            console.log("✅ Cache Hit");
+
+            return JSON.parse(cachedFlights);
+
+        }
+
+        console.log("❌ Cache Miss");
+
+        const flights = await flightRepository.searchFlights(filters);
+
+        await redisClient.set(
+            cacheKey,
+            JSON.stringify(flights),
+            {
+                EX: 120
+            }
+        );
+
+        return flights;
 
     }
 
@@ -90,6 +116,7 @@ class FlightService {
         if (!flight) {
             throw new ApiError(404, "Flight not found");
         }
+        await redisClient.flushAll();
 
         return flight;
     }
@@ -102,7 +129,7 @@ class FlightService {
         if (!flight) {
             throw new ApiError(404, "Flight not found");
         }
-
+        await redisClient.flushAll();
         return flight;
     }
 
