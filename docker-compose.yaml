@@ -1,0 +1,32 @@
+services:
+
+  skybook:
+
+    build: .
+
+    container_name: skybook-api
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env.docker
+    
+    environment:
+  - DOCKER=true
+
+    depends_on:
+      - redis
+
+    restart: unless-stopped
+
+  redis:
+
+    image: redis:latest
+
+    container_name: skybook-redis
+
+    ports:
+      - "6379:6379"
+
+    restart: unless-stopped
