@@ -89,13 +89,15 @@ class UserService {
         const{
             email,
             username,
+            emailOrUsername,
             password,
         }=userData;
 
-        if((!username && !email)|| !password ){
-            throw new ApiError(400,"username/email and password required");
+        const loginIdentifier=emailOrUsername||email||username;
+
+        if (!loginIdentifier || !password) {
+            throw new ApiError(400, "username/email and password required");
         }
-        const loginIdentifier=email||username;
         const user= await userRepository.findByEmailOrUsername(loginIdentifier);
 
         if(!user){
