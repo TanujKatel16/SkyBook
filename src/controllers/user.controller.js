@@ -108,9 +108,24 @@ const updateAccessToken=asyncHandler(async(req,res)=>{
 
 })
 
+const getCurrentUser = asyncHandler(async (req, res) => {
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            req.user,
+            "Current user fetched successfully"
+        )
+    );
+});
+
 export {
     registerUser,
     loginUser,
     logoutUser,
-    updateAccessToken
+    updateAccessToken,
+    getCurrentUser
+
 };

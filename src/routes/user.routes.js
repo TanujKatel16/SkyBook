@@ -3,7 +3,9 @@ import {
     loginUser,
     registerUser,
     logoutUser,
-    updateAccessToken
+    updateAccessToken,
+    getCurrentUser
+
 } from "../controllers/user.controller.js";
 
 import verifyJWT from "../middleware/verifyJWT.js";
@@ -22,7 +24,11 @@ router.route("/register").post(
     registerUser
 )
 router.post("/login",loginUser);
-router.get("/logout",verifyJWT,logoutUser);
 router.post("/refresh-token",updateAccessToken);
+router.post("/register",registerUser);
+
+router.post("/logout",verifyJWT,logoutUser);
+router.get("/current-user",verifyJWT,getCurrentUser);
+
 
 export default router;
