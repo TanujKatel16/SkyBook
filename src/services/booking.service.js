@@ -1,5 +1,6 @@
 import bookingRepository from "../repositories/booking.repository.js";
 import flightRepository from "../repositories/flight.repository.js";
+import generatePNR from "../utils/generatePNR.js";
 import { ApiError } from "../utils/ApiError.js";
 
 class BookingService {
@@ -31,7 +32,9 @@ class BookingService {
 
             bookingStatus: "Pending",
 
-            totalFare: flight.baseFare
+            totalFare: flight.baseFare,
+
+            pnr: generatePNR()
 
         });
 
@@ -42,6 +45,27 @@ class BookingService {
         //             flight.availableSeats - 1
         //     }
         // );
+
+        return booking;
+
+    }
+
+    async getBookingByPNR(pnr) {
+
+        const booking =
+            await bookingRepository.findByPNR(pnr);
+
+        if (!booking) {
+
+            throw new ApiError(
+
+                404,
+
+                "Booking not found"
+
+            );
+
+        }
 
         return booking;
 

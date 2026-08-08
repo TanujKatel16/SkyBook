@@ -4,10 +4,12 @@ class PaymentRepository {
 
     async createPayment(paymentData, session){
 
-        return await Payment.create(
+        const [payment] =  await Payment.create(
             [paymentData],
             { session }
         );
+
+        return payment;
 
     }
 

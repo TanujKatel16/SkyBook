@@ -70,9 +70,33 @@ const cancelBooking = asyncHandler(async (req, res) => {
 
 });
 
+const getBookingByPNR = asyncHandler(async (req, res) => {
+
+    const booking =
+        await bookingService.getBookingByPNR(
+            req.params.pnr
+        );
+
+    return res.status(200).json(
+
+        new ApiResponse(
+
+            200,
+
+            booking,
+
+            "Booking fetched successfully"
+
+        )
+
+    );
+
+});
+
 export {
     createBooking,
     getBookingById,
     getMyBookings,
-    cancelBooking
+    cancelBooking,
+    getBookingByPNR
 };

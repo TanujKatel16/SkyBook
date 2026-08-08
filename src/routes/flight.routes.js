@@ -5,7 +5,8 @@ import {
     getAllFlights,
     searchFlights,
     updateFlight,
-    deleteFlight
+    deleteFlight,
+    getFrequentRoutes
 } from "../controllers/flight.controller.js";
 
 import { verifyJWT } from "../middleware/verifyJWT.js";
@@ -16,7 +17,9 @@ const router = Router();
 // Public Routes
 router.get("/", getAllFlights);
 router.get("/search", searchFlights);
+router.get("/frequent-routes",getFrequentRoutes);
 router.get("/:id", getFlightById);
+
 
 // Admin Routes
 router.post("/", verifyJWT, verifyAdmin, createFlight);

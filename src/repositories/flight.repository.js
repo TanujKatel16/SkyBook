@@ -18,9 +18,39 @@ class FlightRepository {
         return await Flight.find();
     }
 
-    async searchFlights(filters) {
+    async searchFlights({ source, destination, date, passengers }) {
 
-        return await Flight.find(filters);
+        const query = {};
+
+        if (source) {
+            query.source = source.toUpperCase();
+        }
+
+        if (destination) {
+            query.destination = destination.toUpperCase();
+        }
+
+        if (passengers) {
+            query.availableSeats = {
+                $gte: Number(passengers)
+            };
+        }
+
+        if (date) {
+
+            const start = new Date(date);
+            const end = new Date(date);
+
+            end.setDate(end.getDate() + 1);
+
+            query.departureTime = {
+                $gte: start,
+                $lt: end
+            };
+
+        }
+
+        return await Flight.find(query);
 
     }
 
@@ -53,6 +83,16 @@ class FlightRepository {
         return await Flight.findByIdAndDelete(_id);
 
     }
+
+    async getFrequentRoutes() {
+
+    return await Flight.find()
+
+        .sort({ baseFare: 1 })
+
+        .limit(4);
+
+}
 
 }
 

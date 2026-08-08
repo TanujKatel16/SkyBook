@@ -73,6 +73,14 @@ const bookingSchema = new Schema({
 
         required: true
 
+    },
+
+    pnr: {
+
+        type: String,
+        unique: true,
+        required: true,
+        index: true
     }
 
 }, {

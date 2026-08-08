@@ -93,11 +93,33 @@ const deleteFlight = asyncHandler(async (req, res) => {
 
 });
 
+const getFrequentRoutes = asyncHandler(async (req, res) => {
+
+    const flights =
+        await flightService.getFrequentRoutes();
+
+    return res.status(200).json(
+
+        new ApiResponse(
+
+            200,
+
+            flights,
+
+            "Frequent routes fetched successfully"
+
+        )
+
+    );
+
+});
+
 export {
     createFlight,
     getFlightById,
     getAllFlights,
     searchFlights,
     updateFlight,
-    deleteFlight
+    deleteFlight,
+    getFrequentRoutes
 };

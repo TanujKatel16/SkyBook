@@ -26,9 +26,9 @@ const paymentSchema = new Schema({
 
         enum: [
             "UPI",
-            "Card",
-            "NetBanking",
-            "Wallet"
+            "Credit Card",
+            "Debit Card",
+            "Net Banking"
         ],
 
         required: true

@@ -4,7 +4,8 @@ import {
     createBooking,
     getBookingById,
     getMyBookings,
-    cancelBooking
+    cancelBooking,
+    getBookingByPNR
 } from "../controllers/booking.controller.js";
 
 import { verifyJWT } from "../middleware/verifyJWT.js";
@@ -12,11 +13,9 @@ import { verifyJWT } from "../middleware/verifyJWT.js";
 const router = Router();
 
 router.post("/", verifyJWT, createBooking);
-
 router.get("/my-bookings", verifyJWT, getMyBookings);
-
+router.get("/pnr/:pnr",getBookingByPNR);
 router.get("/:id", verifyJWT, getBookingById);
-
 router.patch("/:id/cancel", verifyJWT, cancelBooking);
 
 export default router;

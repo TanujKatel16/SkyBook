@@ -3,7 +3,10 @@ import { Booking } from "../models/booking.model.js";
 class BookingRepository {
 
     async createBooking(bookingData) {
-        return await Booking.create(bookingData);
+        const booking = await Booking.create(bookingData);
+
+        return await Booking.findById(booking._id)
+        .populate("flight");
     }
 
     async findById(_id) {
@@ -15,6 +18,15 @@ class BookingRepository {
     async findByUserId(userId) {
         return await Booking.find({ user: userId })
         .populate("flight");
+    }
+
+    async findByPNR(pnr) {
+
+    return await Booking.findOne({ pnr })
+
+        .populate("flight")
+        .populate("user","-password -refreshToken");
+
     }
 
     async updateBooking(id,updateData,session){

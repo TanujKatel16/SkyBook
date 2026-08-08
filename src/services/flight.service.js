@@ -86,13 +86,13 @@ class FlightService {
 
         if (cachedFlights) {
 
-            console.log("✅ Cache Hit");
+            console.log(" Cache Hit");
 
             return JSON.parse(cachedFlights);
 
         }
 
-        console.log("❌ Cache Miss");
+        console.log(" Cache Miss");
 
         const flights = await flightRepository.searchFlights(filters);
 
@@ -131,6 +131,11 @@ class FlightService {
         }
         await redisClient.flushAll();
         return flight;
+    }
+
+    async getFrequentRoutes() {
+
+        return await flightRepository.getFrequentRoutes();
     }
 
 }
