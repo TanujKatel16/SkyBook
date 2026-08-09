@@ -48,10 +48,10 @@ class PaymentService {
                     booking.flight._id
                 );
 
-            if (flight.availableSeats <= 0) {
+            if (flight.availableSeats < booking.passengers.length) {
                 throw new ApiError(
                     400,
-                    "No seats available"
+                    "Not enough seats available"
                 );
             }
 
@@ -83,8 +83,7 @@ class PaymentService {
 
                 {
 
-                    availableSeats:
-                        flight.availableSeats - 1
+                    availableSeats: flight.availableSeats - booking.passengers.length
 
                 },
 
@@ -114,23 +113,23 @@ class PaymentService {
                
                 await emailService.sendBookingConfirmation({
 
-                    email: booking.user.email,
+                email: booking.user.email,
 
-                    passengerName: booking.passenger.fullName,
+                passengers: booking.passengers,
 
-                    flightNumber: flight.flightNumber,
+                flightNumber: flight.flightNumber,
 
-                    source: flight.source,
+                source: flight.source,
 
-                    destination: flight.destination,
+                destination: flight.destination,
 
-                    departureTime: flight.departureTime,
+                departureTime: flight.departureTime,
 
-                    amount: booking.totalFare,
+                amount: booking.totalFare,
 
-                    transactionId: payment.transactionId
+                transactionId: payment.transactionId
 
-                });
+            });
 
             }catch (error){
 

@@ -1,6 +1,6 @@
 const bookingConfirmationTemplate = ({
 
-    passengerName,
+    passengers,
 
     flightNumber,
 
@@ -16,157 +16,171 @@ const bookingConfirmationTemplate = ({
 
 }) => {
 
+    const passengerRows = passengers.map((passenger, index) => `
+
+        <tr>
+
+            <td><b>Passenger ${index + 1}</b></td>
+
+            <td>
+
+                <b>${passenger.fullName}</b><br>
+
+                Age: ${passenger.age}<br>
+
+                Gender: ${passenger.gender}
+
+            </td>
+
+        </tr>
+
+    `).join("");
+
     return `
 
-    <!DOCTYPE html>
+<!DOCTYPE html>
 
-    <html>
+<html>
 
-    <head>
+<head>
 
-        <style>
+    <style>
 
-            body{
+        body{
 
-                font-family: Arial, sans-serif;
+            font-family: Arial, sans-serif;
 
-                background:#f4f4f4;
+            background:#f4f4f4;
 
-                padding:20px;
+            padding:20px;
 
-            }
+        }
 
-            .container{
+        .container{
 
-                max-width:600px;
+            max-width:600px;
 
-                margin:auto;
+            margin:auto;
 
-                background:white;
+            background:white;
 
-                padding:25px;
+            padding:25px;
 
-                border-radius:10px;
+            border-radius:10px;
 
-                box-shadow:0 2px 8px rgba(0,0,0,0.1);
+            box-shadow:0 2px 8px rgba(0,0,0,0.1);
 
-            }
+        }
 
-            h2{
+        h2{
 
-                color:#0d6efd;
+            color:#0d6efd;
 
-            }
+        }
 
-            table{
+        table{
 
-                width:100%;
+            width:100%;
 
-                border-collapse:collapse;
+            border-collapse:collapse;
 
-                margin-top:20px;
+            margin-top:20px;
 
-            }
+        }
 
-            td{
+        td{
 
-                padding:10px;
+            padding:10px;
 
-                border-bottom:1px solid #ddd;
+            border-bottom:1px solid #ddd;
 
-            }
+        }
 
-            .footer{
+        .footer{
 
-                margin-top:30px;
+            margin-top:30px;
 
-                text-align:center;
+            text-align:center;
 
-                color:gray;
+            color:gray;
 
-            }
+        }
 
-        </style>
+    </style>
 
-    </head>
+</head>
 
-    <body>
+<body>
 
-        <div class="container">
+    <div class="container">
 
-            <h2>✈️ SkyBook</h2>
+        <h2>✈️ SkyBook</h2>
 
-            <h3>Booking Confirmed</h3>
+        <h3>Booking Confirmed</h3>
 
-            <p>Your payment was successful.</p>
+        <p>Your payment was successful.</p>
 
-            <table>
+        <table>
 
-                <tr>
+            ${passengerRows}
 
-                    <td><b>Passenger</b></td>
+            <tr>
 
-                    <td>${passengerName}</td>
+                <td><b>Flight</b></td>
 
-                </tr>
+                <td>${flightNumber}</td>
 
-                <tr>
+            </tr>
 
-                    <td><b>Flight</b></td>
+            <tr>
 
-                    <td>${flightNumber}</td>
+                <td><b>Route</b></td>
 
-                </tr>
+                <td>${source} → ${destination}</td>
 
-                <tr>
+            </tr>
 
-                    <td><b>Route</b></td>
+            <tr>
 
-                    <td>${source} → ${destination}</td>
+                <td><b>Departure</b></td>
 
-                </tr>
+                <td>${new Date(departureTime).toLocaleString()}</td>
 
-                <tr>
+            </tr>
 
-                    <td><b>Departure</b></td>
+            <tr>
 
-                    <td>${new Date(departureTime).toLocaleString()}</td>
+                <td><b>Amount Paid</b></td>
 
-                </tr>
+                <td>₹${amount}</td>
 
-                <tr>
+            </tr>
 
-                    <td><b>Amount Paid</b></td>
+            <tr>
 
-                    <td>₹${amount}</td>
+                <td><b>Transaction ID</b></td>
 
-                </tr>
+                <td>${transactionId}</td>
 
-                <tr>
+            </tr>
 
-                    <td><b>Transaction ID</b></td>
+        </table>
 
-                    <td>${transactionId}</td>
+        <div class="footer">
 
-                </tr>
+            <p>Thank you for choosing <b>SkyBook</b>.</p>
 
-            </table>
-
-            <div class="footer">
-
-                <p>Thank you for choosing <b>SkyBook</b>.</p>
-
-                <p>We wish you a pleasant journey! ✈️</p>
-
-            </div>
+            <p>We wish you a pleasant journey! ✈️</p>
 
         </div>
 
-    </body>
+    </div>
 
-    </html>
+</body>
 
-    `;
+</html>
+
+`;
 
 };
 

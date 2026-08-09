@@ -9,8 +9,12 @@ class BookingService {
 
         const {
             flightId,
-            passenger
+            passengers
         } = bookingData;
+
+        if (!passengers || passengers.length === 0) {
+        throw new ApiError(400, "At least one passenger is required");
+}
 
         const flight = await flightRepository.findById(flightId);
 
@@ -18,9 +22,12 @@ class BookingService {
             throw new ApiError(404, "Flight not found");
         }
 
-        if (flight.availableSeats <= 0) {
-            throw new ApiError(400, "No seats available");
-        }
+        if (flight.availableSeats < passengers.length) {
+        throw new ApiError(
+            400,
+            `Only ${flight.availableSeats} seats are available`
+        );
+    }
 
         const booking = await bookingRepository.createBooking({
 
@@ -28,24 +35,15 @@ class BookingService {
 
             flight: flightId,
 
-            passenger,
+            passengers,
 
             bookingStatus: "Pending",
 
-            totalFare: flight.baseFare,
+            totalFare: flight.baseFare * passengers.length,
 
-            pnr: generatePNR()
+            pnr: generatePNR() // isme change baakin hai
 
         });
-
-        // await flightRepository.updateFlight(
-        //     flightId,
-        //     {
-        //         availableSeats:
-        //             flight.availableSeats - 1
-        //     }
-        // );
-
         return booking;
 
     }

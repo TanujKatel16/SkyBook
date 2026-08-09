@@ -21,7 +21,7 @@ const bookingSchema = new Schema({
 
     },
 
-    passenger: {
+    passengers: [{
 
         fullName: {
 
@@ -51,7 +51,7 @@ const bookingSchema = new Schema({
 
         }
 
-    },
+    }],
 
     bookingStatus: {
 

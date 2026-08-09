@@ -5,7 +5,6 @@ class EmailService {
 
     constructor() {
 
-
         this.transporter = nodemailer.createTransport({
 
             service: "gmail",
@@ -24,10 +23,9 @@ class EmailService {
 
     async sendBookingConfirmation({
 
-
         email,
 
-        passengerName,
+        passengers,
 
         flightNumber,
 
@@ -45,7 +43,7 @@ class EmailService {
 
         const html = bookingConfirmationTemplate({
 
-            passengerName,
+            passengers,
 
             flightNumber,
 
@@ -72,6 +70,7 @@ class EmailService {
             html
 
         });
+
         console.log(info);
 
     }
